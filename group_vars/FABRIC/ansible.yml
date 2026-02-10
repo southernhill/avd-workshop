@@ -1,0 +1,32 @@
+---
+# --- Ansible connection settings ---
+# These tell Ansible HOW to connect to the switches.
+# All hosts in the FABRIC group inherit these settings.
+
+ansible_connection: ansible.netcommon.httpapi # use eAPI (HTTP API), not SSH
+ansible_network_os: arista.eos.eos # tells Ansible this is an Arista EOS device
+ansible_become: true # escalate to privileged mode after connecting
+ansible_become_method: enable # use 'enable' command to escalate
+ansible_httpapi_use_ssl: true # connect to eAPI over HTTPS
+ansible_httpapi_validate_certs: false # skip certificate validation (lab only!)
+ansible_user: admin # eAPI login username
+ansible_password: admin # eAPI login password
+
+# --- Management network settings ---
+# AVD uses these to generate the management interface config on each switch.
+# The actual management IP per device comes from mgmt_ip in the topology definition.
+
+mgmt_interface: Management0 # which interface is used for out-of-band management
+mgmt_interface_vrf: mgmt # VRF for the management interface
+mgmt_gateway: 172.20.20.1 # default gateway for the mgmt VRF (containerlab bridge)
+
+# --- Local user account ---
+# AVD generates this user in the EOS config on every switch.
+# Without this, you couldn't SSH or access eAPI after deploying configs.
+
+aaa_settings:
+  local_users:
+    - name: admin
+      privilege: 15 # full CLI access
+      role: network-admin # EOS role with unrestricted permissions
+      sha512_password: $6$dEL3gqUWsCtZ5AmI$iyq4BFwTatbdGQ7VMWIfkfft4cTt8HDCk0iyvMCH40qYArL9Wf4O.MK8ZHLvlZUKdY3uIL3OyHHal0Y.sh1ql1

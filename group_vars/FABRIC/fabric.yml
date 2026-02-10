@@ -1,0 +1,7 @@
+---
+# This file lives in group_vars/FABRIC/ — Ansible automatically loads it
+# for every host in the FABRIC inventory group (spines + leaves).
+#
+# fabric_name must match that top-level group name ("FABRIC") so AVD knows
+# where to start when discovering the topology hierarchy from inventory.yml.
+fabric_name: FABRIC

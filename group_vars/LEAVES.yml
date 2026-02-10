@@ -1,0 +1,33 @@
+---
+# This tells AVD that all hosts in the LEAVES inventory group
+# should use the 'l3leaf' key in fabric.yml for their config.
+# The group name "LEAVES" is arbitrary — this 'type' is what links them.
+type: l3leaf
+
+# Leaf switches — matches hosts in inventory group LEAVES.
+# 'defaults' apply to all leaves; 'node_groups' let you set per-rack overrides.
+l3leaf:
+  defaults:
+    platform: cEOS
+    uplink_switches: [spine-01, spine-02] # AVD auto-generates P2P links + BGP peering to these spines
+    uplink_interfaces: [Ethernet1, Ethernet2] # local interfaces used for uplinks (order matches uplink_switches)
+    loopback_ipv4_pool: 10.255.1.0/27 # AVD assigns a /32 loopback per leaf from this pool
+    vtep_loopback_ipv4_pool: 10.255.10.0/27 # AVD assigns a /32 VTEP source IP per leaf from this pool
+    uplink_ipv4_pool: 10.255.255.0/26 # AVD assigns /31 P2P link IPs from this pool
+    spanning_tree_mode: mstp
+    virtual_router_mac_address: 00:1c:73:00:00:99 # shared VARP MAC — AVD adds this to all leaf configs
+  node_groups:
+    - group: RACK1 # logical grouping — settings here override 'defaults' for this group
+      bgp_as: 65101 # per-rack AS — AVD builds eBGP underlay + iBGP/EVPN overlay from this
+      nodes:
+        - name: leaf-01
+          id: 1
+          mgmt_ip: 172.20.20.21/24
+          uplink_switch_interfaces: [Ethernet1, Ethernet1] # spine-side interfaces (order matches uplink_switches)
+    - group: RACK2
+      bgp_as: 65102
+      nodes:
+        - name: leaf-02
+          id: 2
+          mgmt_ip: 172.20.20.22/24
+          uplink_switch_interfaces: [Ethernet2, Ethernet2]

@@ -1,0 +1,20 @@
+---
+# This tells AVD that all hosts in the SPINES inventory group
+# should use the 'spine' key in fabric.yml for their config.
+# The group name "SPINES" is arbitrary — this 'type' is what links them.
+type: spine
+
+# Spine switches — matches hosts in inventory group SPINES.
+# 'defaults' apply to all spines; 'nodes' list individual devices.
+spine:
+  defaults:
+    platform: cEOS # AVD uses this to select platform-specific templates
+    bgp_as: 65100 # shared AS — AVD auto-generates BGP config for all spines
+    loopback_ipv4_pool: 10.255.0.0/27 # AVD assigns a /32 loopback per spine from this pool
+  nodes:
+    - name: spine-01 # must match the hostname in inventory.yml
+      id: 1 # unique id — drives IP allocation from the pools above
+      mgmt_ip: 172.20.20.11/24 # must match ansible_host in inventory.yml
+    - name: spine-02
+      id: 2
+      mgmt_ip: 172.20.20.12/24

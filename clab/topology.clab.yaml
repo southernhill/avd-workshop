@@ -1,0 +1,40 @@
+name: avd-workshop
+prefix: ""
+
+mgmt:
+  network: avd-workshop-mgmt
+  ipv4-subnet: 172.20.20.0/24
+  ipv4-gw: 172.20.20.1
+
+topology:
+  kinds:
+    arista_ceos:
+      image: ceos:4.35.0F
+      env:
+        CLAB_MGMT_VRF: mgmt
+
+  nodes:
+    spine-01:
+      kind: arista_ceos
+      mgmt-ipv4: 172.20.20.11
+
+    spine-02:
+      kind: arista_ceos
+      mgmt-ipv4: 172.20.20.12
+
+    leaf-01:
+      kind: arista_ceos
+      mgmt-ipv4: 172.20.20.21
+
+    leaf-02:
+      kind: arista_ceos
+      mgmt-ipv4: 172.20.20.22
+
+  links:
+    # spine-01 to leaves
+    - endpoints: ["spine-01:eth1", "leaf-01:eth1"]
+    - endpoints: ["spine-01:eth2", "leaf-02:eth1"]
+
+    # spine-02 to leaves
+    - endpoints: ["spine-02:eth1", "leaf-01:eth2"]
+    - endpoints: ["spine-02:eth2", "leaf-02:eth2"]

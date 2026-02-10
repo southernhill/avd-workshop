@@ -1,0 +1,16 @@
+---
+
+FABRIC:
+  children:
+    SPINES:
+      hosts:
+        spine-01:
+          ansible_host: 172.20.20.11
+        spine-02:
+          ansible_host: 172.20.20.12
+    LEAVES:
+      hosts:
+        leaf-01:
+          ansible_host: 172.20.20.21
+        leaf-02:
+          ansible_host: 172.20.20.22
